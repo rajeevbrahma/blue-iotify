@@ -9,7 +9,19 @@ import json
 import RPi.GPIO as GPIO                                                                                                          
 import time                                                                                                                      
 import dweepy                                                                                                                    
-from sht21 import SHT21                                                                                                          
+from sht21 import SHT21  
+
+organization = "5q764p"
+
+appId = "APP"
+
+authMethod = "apikey"
+authKey = "a-5q764p-bpnugpigze"
+authToken = "JZ4YT5_*n+9OWXw9*w"
+
+deviceType = "Trashcan"
+
+deviceId = "APP"                                                                                                        
 
 options = {"org": organization, "id":appId, "auth-method": authMethod, "auth-key": authKey, "auth-token": authToken}
 
