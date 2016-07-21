@@ -17,22 +17,14 @@ alarmOut = 22 # Broadcom pin 22 (P1 pin 15)
 
 
 
-# Pin Setup:                                                                                                                     
-GPIO.setmode(GPIO.BCM) # Broadcom pin-numbering scheme                                                                           
-print("Setting Output")                                                                                                          
-GPIO.setup(alarmOut, GPIO.LOW) # LED pin set as output                                                                           
-GPIO.setup(HCSR04TRIG, GPIO.LOW) # LED pin set as output                                                                           
-
-                                                                                                                                 
-print("Setting Input")                                                                                                           
-# GPIO.setup(HCSR04ECHO, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Button pin set                                                     
-# GPIO.setup(LIDCOVER, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Button pin set                                                   
 
 def ultrasonicSensor_init():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(TRIG,GPIO.OUT)
 	GPIO.setup(ECHO,GPIO.IN)
+	GPIO.setup(LIDCOVER,GPIO.IN)
 	GPIO.output(TRIG, False)
+	GPIO.output(alarmOut,False)
 
 def distanceMeasurement():
 	l_prev_distance = 0
