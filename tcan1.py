@@ -23,10 +23,12 @@ def ultrasonicSensor_init():
 	GPIO.setup(TRIG,GPIO.OUT)
 	GPIO.setup(ECHO,GPIO.IN)
 	GPIO.setup(LIDCOVER,GPIO.IN)
+	GPIO.setup(alarmOut,OUT)
 	GPIO.output(TRIG, False)
 	GPIO.output(alarmOut,False)
 
 def distanceMeasurement():
+	global client,deviceType,deviceId
 	l_prev_distance = 0
 	while 1:
 		ultrasonicSensor_init()
@@ -50,8 +52,9 @@ def distanceMeasurement():
 
 			if(l_prev_distance != l_distance and l_prev_distance > (l_distance+3) or l_prev_distance < (l_distance-3)):
 				l_prev_distance = l_distance
-				client.publish(MQTT_CHANNEL, "{\"container\":\""+GARBAGE_ID+"\",\"level\":"+str(l_distance)+"}")
-			
+				message = {"ID":1,"distance":l_distance}
+				client.publishEvent(deviceType, deviceId, "status", "json", message)
+		
 			if l_distance > 180:
 				GPIO.output(alarmOut,True) 
 
@@ -59,7 +62,7 @@ def distanceMeasurement():
 			GPIO.cleanup()
 
 def init():
-	global client
+	global client,deviceType,deviceId
 	organization = "5q764p"
 	appId = "APP"
 	authMethod = "apikey"
