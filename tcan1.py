@@ -28,38 +28,40 @@ def ultrasonicSensor_init():
 	GPIO.output(alarmOut,False)
 
 def distanceMeasurement():
-	global client,deviceType,deviceId
-	l_prev_distance = 0
-	while 1:
-		ultrasonicSensor_init()
-		if GPIO.input(LIDCOVER) == 0:
-			time.sleep(2)		
-			GPIO.output(TRIG, True)
-			time.sleep(0.00001)
-			GPIO.output(TRIG, False)
-			#Starts the timer 
-			while GPIO.input(ECHO)==0:
-				pulse_start = time.time()
-			#Waits for the timer to end once the pin is high
-			while GPIO.input(ECHO)==1:
-				pulse_end = time.time()
+	try:
+		global client,deviceType,deviceId
+		l_prev_distance = 0
+		while 1:
+			ultrasonicSensor_init()
+			if GPIO.input(LIDCOVER) == 0:
+				time.sleep(2)		
+				GPIO.output(TRIG, True)
+				time.sleep(0.00001)
+				GPIO.output(TRIG, False)
+				#Starts the timer 
+				while GPIO.input(ECHO)==0:
+					pulse_start = time.time()
+				#Waits for the timer to end once the pin is high
+				while GPIO.input(ECHO)==1:
+					pulse_end = time.time()
 
-			pulse_duration = pulse_end - pulse_start
+				pulse_duration = pulse_end - pulse_start
 
-			l_distance = pulse_duration * 17150
+				l_distance = pulse_duration * 17150
 
-			l_distance = round(l_distance, 2)
+				l_distance = round(l_distance, 2)
 
-			if(l_prev_distance != l_distance and l_prev_distance > (l_distance+3) or l_prev_distance < (l_distance-3)):
-				l_prev_distance = l_distance
-				message = {"ID":1,"distance":l_distance}
-				client.publishEvent(deviceType, deviceId, "status", "json", message)
-		
-			if l_distance > 180:
-				GPIO.output(alarmOut,True) 
+				if(l_prev_distance != l_distance and l_prev_distance > (l_distance+3) or l_prev_distance < (l_distance-3)):
+					l_prev_distance = l_distance
+					message = {"ID":1,"distance":l_distance}
+					client.publishEvent(deviceType, deviceId, "status", "json", message)
+			
+				if l_distance <50:
+					GPIO.output(alarmOut,True) 
 
-			print "Distance:",l_distance,"cm"
-			GPIO.cleanup()
+				print "Distance:",l_distance,"cm"
+	except KeyboardInterrupt:			
+		GPIO.cleanup()
 
 def init():
 	global client,deviceType,deviceId
