@@ -23,13 +23,13 @@ def ultrasonicSensor_init():
 	GPIO.setup(TRIG,GPIO.OUT)
 	GPIO.setup(ECHO,GPIO.IN)
 	GPIO.setup(LIDCOVER,GPIO.IN)
-	GPIO.setup(alarmOut,OUT)
+	GPIO.setup(alarmOut,GPIO.OUT)
 	GPIO.output(TRIG, False)
 	GPIO.output(alarmOut,False)
 
 def distanceMeasurement():
 	try:
-		global client,deviceType,deviceId
+		global client,deviceType
 		l_prev_distance = 0
 		while 1:
 			ultrasonicSensor_init()
@@ -54,6 +54,7 @@ def distanceMeasurement():
 				if(l_prev_distance != l_distance and l_prev_distance > (l_distance+3) or l_prev_distance < (l_distance-3)):
 					l_prev_distance = l_distance
 					message = {"ID":1,"distance":l_distance}
+					deviceId = "APP"
 					client.publishEvent(deviceType, deviceId, "status", "json", message)
 			
 				if l_distance <50:
@@ -64,14 +65,14 @@ def distanceMeasurement():
 		GPIO.cleanup()
 
 def init():
-	global client,deviceType,deviceId
+	global client,deviceType
 	organization = "5q764p"
-	appId = "APP"
+	appId = "DEVICE"
 	authMethod = "apikey"
 	authKey = "a-5q764p-bpnugpigze"
-	authToken = "JZ4YT5_*n+9OWXw9*w"
+	authToken = "LSUoALInB)hD0b4HI_"
 	deviceType = "Trashcan"
-	deviceId = "APP"                                                                                                        
+	deviceId = "DEVICE"                                                                                                        
 	options = {"org": organization, "id":appId, "auth-method": authMethod, "auth-key": authKey, "auth-token": authToken}
 	client = ibmiotf.application.Client(options)
 	client.connect()
