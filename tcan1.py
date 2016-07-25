@@ -70,7 +70,7 @@ def init():
 	appId = "DEVICE"
 	authMethod = "apikey"
 	authKey = "a-5q764p-bpnugpigze"
-	authToken = "LSUoALInB)hD0b4HI_"
+	authToken = "JZ4YT5_*n+9OWXw9*w"
 	deviceType = "Trashcan"
 	deviceId = "DEVICE"                                                                                                        
 	options = {"org": organization, "id":appId, "auth-method": authMethod, "auth-key": authKey, "auth-token": authToken}
