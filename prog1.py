@@ -11,6 +11,7 @@ def pubFunc():
 
 		myData={"message" : "Hello Iotify!","number":i}
 		# print myData
+		deviceId = "APP"
 		client.publishEvent(deviceType, deviceId, "status", "json", myData)
 		i+=1
 		time.sleep(10)
@@ -24,7 +25,7 @@ def callback(event):
 
 organization = "5q764p"
 
-appId = "APP"
+appId = "DEVICE"
 
 authMethod = "apikey"
 authKey = "a-5q764p-bpnugpigze"
@@ -32,7 +33,7 @@ authToken = "JZ4YT5_*n+9OWXw9*w"
 
 deviceType = "Trashcan"
 
-deviceId = "APP"
+deviceId = "DEVICE"
 
 options = {"org": organization, "id":appId, "auth-method": authMethod, "auth-key": authKey, "auth-token": authToken}
 
