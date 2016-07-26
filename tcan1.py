@@ -16,6 +16,10 @@ from twilio import TwilioRestException
 # datetime module
 import datetime
 
+LOG_FILENAME = 'Trashcanlogs.log'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format='%(asctime)s, %(levelname)s, %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+
 account_sid = "AC161d5213dce9632db6d2b6febdad21eb" 
 auth_token  = "9ee4b0327f1e3d09b7a8928bb602ac9b"
 
@@ -104,7 +108,7 @@ def distanceMeasurement():
 						if diff_minutes >= 15:		
 						  
 							try:
-								message = client.messages.create(body=,to="+919738300498",from_="+12512724152")	
+								message = client.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
 								previousTime = datetime.datetime.now()
 							except TwilioRestException as e:
 								previousTime = datetime.datetime.now()
@@ -119,12 +123,13 @@ def distanceMeasurement():
 					else:
 						pass	
 
+	
+	except KeyboardInterrupt: 
+		GPIO.cleanup()
 	except Exception as e:
 		logging.error("The distanceMeasurement exception is %s,%s"%(e,type(e)))	
 
-
-	except KeyboardInterrupt: 
-		GPIO.cleanup()	
+	
 
 '''****************************************************************************************
 Function Name 	:	init()
