@@ -22,6 +22,7 @@ Parameters 		:	-
 ****************************************************************************************'''
 
 def ultrasonicSensorInit():
+	GPIO.setwarnings(False)
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(TRIG,GPIO.OUT)
 	GPIO.setup(ECHO,GPIO.IN)
@@ -81,7 +82,7 @@ def distanceMeasurement():
 					presentTime = datetime.datetime.now() 
 					 
 					messageBody = "Trashcan filled"
-					if (previousTime!=0)
+					if (previousTime!=0):
 						diff = presentTime - previousTime 
 				
 						day  = diff.days
@@ -133,7 +134,7 @@ def init():
 		# options require for the connection
 		options = {"org": organization, "id":appId, "auth-method": authMethod, "auth-key": authKey, "auth-token": authToken}
 		client = ibmiotf.application.Client(options)
-		# client.connect()
+		client.connect()
 	except ibmiotf.connectionException as e:
 		print e
 		# logging.error("The iotfconnection Exception is %s,%s"%(e,type(e)))	
