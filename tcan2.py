@@ -87,14 +87,14 @@ def distanceMeasurement():
 					l_prev_distance = l_distance
 					message = {"ID":1,"distance":l_distance}
 					deviceId = "APP"
-					try:
+					# try:
 						# publishing the message to the Device called APP
-						pubReturn = client.publishEvent(deviceType, deviceId, "status", "json", message)
-						if pubReturn ==True:
-							logging.info("The message successfully sent")
-					except IoTFCReSTException  as e:
-							logging.info("The sent message Failed")
-							logging.error("The publishEvent exception httpcode :%s,message:%s,response:%s"(e.httpcode,e.message,e.response))
+					pubReturn = client.publishEvent(deviceType, deviceId, "status", "json", message)
+					if pubReturn ==True:
+						logging.info("The message successfully sent")
+					# except IoTFCReSTException  as e:
+							# logging.info("The sent message Failed")
+							# logging.error("The publishEvent exception httpcode :%s,message:%s,response:%s"(e.httpcode,e.message,e.response))
 				if l_distance <50:
 					GPIO.output(alarmOut,True)
 					presentTime = datetime.datetime.now() 
