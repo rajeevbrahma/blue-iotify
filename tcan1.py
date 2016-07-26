@@ -3,9 +3,23 @@ import ibmiotf.application
 import time
 import json
 
-
 # External module imports                                                                                                        
-import RPi.GPIO as GPIO   
+import RPi.GPIO as GPIO
+
+#logging module
+import logging 
+
+# twilio module
+from twilio.rest import TwilioRestClient
+from twilio import TwilioRestException
+
+# datetime module
+import datetime
+
+account_sid = "AC161d5213dce9632db6d2b6febdad21eb" 
+auth_token  = "9ee4b0327f1e3d09b7a8928bb602ac9b"
+
+client = TwilioRestClient(account_sid, auth_token)
 
 
 
@@ -17,8 +31,13 @@ alarmOut = 22 # Broadcom pin 22 (P1 pin 15)
 
 
 
+'''****************************************************************************************
+Function Name 	:	ultrasonicSensorInit()
+Description		:	Function which initilizes the GPIO pins
+Parameters 		:	-
+****************************************************************************************'''
 
-def ultrasonicSensor_init():
+def ultrasonicSensorInit():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(TRIG,GPIO.OUT)
 	GPIO.setup(ECHO,GPIO.IN)
@@ -27,12 +46,20 @@ def ultrasonicSensor_init():
 	GPIO.output(TRIG, False)
 	GPIO.output(alarmOut,False)
 
+'''****************************************************************************************
+Function Name 	:	distanceMeasurement()
+Description		:	Function calculates the amount of waste in the trashcan and send it to the client
+					and sends an alert message when trash can reaches the threshold
+Parameters 		:	-
+****************************************************************************************'''
+
 def distanceMeasurement():
 	try:
 		global client,deviceType
 		l_prev_distance = 0
+		previousTime = 0
+		ultrasonicSensorInit()
 		while 1:
-			ultrasonicSensor_init()
 			if GPIO.input(LIDCOVER) == 0:
 				time.sleep(2)		
 				GPIO.output(TRIG, True)
@@ -55,27 +82,72 @@ def distanceMeasurement():
 					l_prev_distance = l_distance
 					message = {"ID":1,"distance":l_distance}
 					deviceId = "APP"
-					client.publishEvent(deviceType, deviceId, "status", "json", message)
-			
+					try:
+						# publishing the message to the Device called APP
+						pubReturn = client.publishEvent(deviceType, deviceId, "status", "json", message)
+						if pubReturn ==True:
+							logging.info("The message successfully sent")
+					except IoTFCReSTExcetption  as e:
+							logging.info("The sent message Failed")
+							logging.error("The publishEvent exception httpcode :%s,message:%s,response:%s"(e.httpcode,e.message,e.response))
 				if l_distance <50:
-					GPIO.output(alarmOut,True) 
+					GPIO.output(alarmOut,True)
+					presentTime = datetime.datetime.now() 
+					 
+					messageBody = "Trashcan filled"
+					if (previousTime!=0)
+						diff = presentTime - previousTime 
+				
+						day  = diff.days
+						hour = (day*24 + diff.seconds/3600)
+						diff_minutes = (diff.days *24*60)+(diff.seconds/60)
+						if diff_minutes >= 15:		
+						  
+							try:
+								message = client.messages.create(body=,to="+919738300498",from_="+12512724152")	
+								previousTime = datetime.datetime.now()
+							except TwilioRestException as e:
+								previousTime = datetime.datetime.now()
+								print e	
+					elif(previousTime == 0):
+						try:
+							message = client.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
+							previousTime = datetime.datetime.now()
+						except TwilioRestException as e:
+							previousTime = datetime.datetime.now()
+							print e	
+					else:
+						pass	
 
-				print "Distance:",l_distance,"cm"
-	except KeyboardInterrupt:			
-		GPIO.cleanup()
+	except Exception as e:
+		logging.error("The distanceMeasurement exception is %s,%s"%(e,type(e)))	
+
+
+	except KeyboardInterrupt: 
+		GPIO.cleanup()	
+
+'''****************************************************************************************
+Function Name 	:	init()
+Description		:	Function which connects to the ibmiotf service
+Parameters 		:	-
+****************************************************************************************'''
 
 def init():
 	global client,deviceType
-	organization = "5q764p"
-	appId = "DEVICE"
-	authMethod = "apikey"
-	authKey = "a-5q764p-bpnugpigze"
-	authToken = "JZ4YT5_*n+9OWXw9*w"
-	deviceType = "Trashcan"
-	deviceId = "DEVICE"                                                                                                        
-	options = {"org": organization, "id":appId, "auth-method": authMethod, "auth-key": authKey, "auth-token": authToken}
-	client = ibmiotf.application.Client(options)
-	client.connect()
+	organization = "5q764p" #Your organization ID
+	appId = "DEVICE"   # The Device you've created and wants to connect with
+	authMethod = "apikey" #Method of authentication (the only value currently supported is apikey)
+	authKey = "a-5q764p-bpnugpigze" #API key (required if auth-method is apikey).
+	authToken = "JZ4YT5_*n+9OWXw9*w"#API key token (required if auth-method is apikey).
+	deviceType = "Trashcan" # The Type of the device created in your organization 
+	deviceId = "DEVICE" # The Device you've created and wants to connect with                                                                                                       
+	try:
+		# options require for the connection
+		options = {"org": organization, "id":appId, "auth-method": authMethod, "auth-key": authKey, "auth-token": authToken}
+		client = ibmiotf.application.Client(options)
+		# client.connect()
+	except ibmiotf.connectionException as e:
+		logging.error("The iotfconnection Exception is %s,%s"%(e,type(e)))	
 
 
 if __name__ == '__main__':

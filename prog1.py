@@ -12,7 +12,8 @@ def pubFunc():
 		myData={"message" : "Hello Iotify!","number":i}
 		# print myData
 		deviceId = "APP"
-		client.publishEvent(deviceType, deviceId, "status", "json", myData)
+		returnvalue = client.publishEvent(deviceType, deviceId, "status", "json", myData)
+		print returnvalue #return value for the publishEvent for success is True and failure is False
 		i+=1
 		time.sleep(10)
 
