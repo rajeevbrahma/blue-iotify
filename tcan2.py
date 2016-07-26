@@ -6,6 +6,26 @@ import json
 # External module imports                                                                                                        
 import RPi.GPIO as GPIO
 
+#logging module
+import logging 
+
+# twilio module
+from twilio.rest import TwilioRestClient
+from twilio import TwilioRestException
+
+# datetime module
+import datetime
+
+LOG_FILENAME = 'Trashcanlogs.log'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format='%(asctime)s, %(levelname)s, %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+
+account_sid = "AC161d5213dce9632db6d2b6febdad21eb" 
+auth_token  = "9ee4b0327f1e3d09b7a8928bb602ac9b"
+
+client = TwilioRestClient(account_sid, auth_token)
+
+
 
 # Pin Definitons:                                                                                                                
 TRIG = 5 # Broadcom pin 18 (P1 pin 12)                                                                                     
@@ -42,9 +62,8 @@ def distanceMeasurement():
 		global client,deviceType
 		l_prev_distance = 0
 		previousTime = 0
+		ultrasonicSensorInit()
 		while 1:
-			ultrasonicSensorInit()
-		
 			if GPIO.input(LIDCOVER) == 0:
 				time.sleep(2)		
 				GPIO.output(TRIG, True)
@@ -73,9 +92,8 @@ def distanceMeasurement():
 						if pubReturn ==True:
 							logging.info("The message successfully sent")
 					except IoTFCReSTExcetption  as e:
-							print e
-							# logging.info("The sent message Failed")
-							# logging.error("The publishEvent exception httpcode :%s,message:%s,response:%s"(e.httpcode,e.message,e.response))
+							logging.info("The sent message Failed")
+							logging.error("The publishEvent exception httpcode :%s,message:%s,response:%s"(e.httpcode,e.message,e.response))
 				if l_distance <50:
 					GPIO.output(alarmOut,True)
 					presentTime = datetime.datetime.now() 
@@ -109,8 +127,7 @@ def distanceMeasurement():
 	except KeyboardInterrupt: 
 		GPIO.cleanup()
 	except Exception as e:
-		print e
-		# logging.error("The distanceMeasurement exception is %s,%s"%(e,type(e)))	
+		logging.error("The distanceMeasurement exception is %s,%s"%(e,type(e)))	
 
 	
 
@@ -135,8 +152,7 @@ def init():
 		client = ibmiotf.application.Client(options)
 		# client.connect()
 	except ibmiotf.connectionException as e:
-		print e
-		# logging.error("The iotfconnection Exception is %s,%s"%(e,type(e)))	
+		logging.error("The iotfconnection Exception is %s,%s"%(e,type(e)))	
 
 
 if __name__ == '__main__':
