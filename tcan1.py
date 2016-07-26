@@ -7,6 +7,28 @@ import json
 import RPi.GPIO as GPIO
 
 
+#logging module
+import logging 
+
+# twilio module
+from twilio.rest import TwilioRestClient
+from twilio import TwilioRestException
+
+# datetime module
+import datetime
+
+LOG_FILENAME = 'Trashcanlogs.log'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format='%(asctime)s, %(levelname)s, %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+
+account_sid = "AC161d5213dce9632db6d2b6febdad21eb" 
+auth_token  = "9ee4b0327f1e3d09b7a8928bb602ac9b"
+
+client = TwilioRestClient(account_sid, auth_token)
+
+
+
+
 # Pin Definitons:                                                                                                                
 TRIG = 5 # Broadcom pin 18 (P1 pin 12)                                                                                     
 ECHO = 6 # Broadcom pin 23 (P1 pin 16)                                                                                   
