@@ -73,7 +73,7 @@ def distanceMeasurement():
 						pubReturn = client.publishEvent(deviceType, deviceId, "status", "json", message)
 						if pubReturn ==True:
 							logging.info("The message successfully sent")
-					except IoTFCReSTExcetption  as e:
+					except IoTFCReSTException  as e:
 							print e
 							# logging.info("The sent message Failed")
 							# logging.error("The publishEvent exception httpcode :%s,message:%s,response:%s"(e.httpcode,e.message,e.response))
