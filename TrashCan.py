@@ -84,8 +84,8 @@ def distanceMeasurement():
 				l_distance = pulse_duration * 17150
 
 				l_distance = round(l_distance, 2)
-
-				if(l_prev_distance != l_distance and l_prev_distance > (l_distance+3) or l_prev_distance < (l_distance-3)):
+				# and l_prev_distance > (l_distance+3) or l_prev_distance < (l_distance-3)
+				if(l_prev_distance != l_distance):
 					l_prev_distance = l_distance
 					message = {"ID":1,"distance":l_distance}
 					deviceId = "APP"
