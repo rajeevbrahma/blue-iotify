@@ -63,9 +63,10 @@ def distanceMeasurement():
 		global client,deviceType
 		l_prev_distance = 0
 		previousTime = 0
+		ultrasonicSensorInit()
+			
 		while 1:
 
-			ultrasonicSensorInit()
 			if GPIO.input(LIDCOVER) == 0:
 				time.sleep(2)		
 				GPIO.output(TRIG, True)
