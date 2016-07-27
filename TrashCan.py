@@ -23,7 +23,7 @@ logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format='%(asctime)
 account_sid = "AC161d5213dce9632db6d2b6febdad21eb" 
 auth_token  = "9ee4b0327f1e3d09b7a8928bb602ac9b"
 
-client = TwilioRestClient(account_sid, auth_token)
+twilioClient = TwilioRestClient(account_sid, auth_token)
 
 
 
@@ -110,14 +110,14 @@ def distanceMeasurement():
 						if diff_minutes >= 15:		
 						  
 							try:
-								message = client.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
+								message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
 								previousTime = datetime.datetime.now()
 							except TwilioRestException as e:
 								previousTime = datetime.datetime.now()
 								print e	
 					elif(previousTime == 0):
 						try:
-							message = client.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
+							message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
 							previousTime = datetime.datetime.now()
 						except TwilioRestException as e:
 							previousTime = datetime.datetime.now()
