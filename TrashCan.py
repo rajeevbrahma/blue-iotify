@@ -86,6 +86,7 @@ def distanceMeasurement():
 				l_distance = round(l_distance, 2)
 				# and l_prev_distance > (l_distance+3) or l_prev_distance < (l_distance-3)
 				if(l_prev_distance != l_distance):
+					GPIO.output(alarmOut,False)
 					l_prev_distance = l_distance
 					message = {"ID":1,"distance":l_distance}
 					deviceId = "APP"
