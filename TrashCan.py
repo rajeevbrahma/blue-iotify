@@ -84,10 +84,10 @@ def distanceMeasurement():
 				l_distance = pulse_duration * 17150
 
 				l_distance = round(l_distance, 2)
-				# and l_prev_distance > (l_distance+3) or l_prev_distance < (l_distance-3)
 				if(l_prev_distance != l_distance):
 					GPIO.output(alarmOut,False)
 					l_prev_distance = l_distance
+					previousTime = 0
 					message = {"ID":1,"distance":l_distance}
 					deviceId = "APP"
 					try:
@@ -112,7 +112,9 @@ def distanceMeasurement():
 						if diff_minutes >= 15:		
 						  
 							try:
+								# twilio message sent option
 								message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
+								# storing the time for the 15min interval purpose
 								previousTime = datetime.datetime.now()
 							except TwilioRestException as e:
 								previousTime = datetime.datetime.now()
