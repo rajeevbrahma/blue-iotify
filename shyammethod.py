@@ -59,10 +59,12 @@ Parameters 		:	-
 ****************************************************************************************'''
 
 def distanceMeasurement():
+	criticalLevelFlag = False
+	started = True
 	try:
 		global client,deviceType
 		l_prev_distance = 0
-		previousTime = 0
+		previousTime = -1
 		ultrasonicSensorInit()
 			
 		while 1:
@@ -86,22 +88,14 @@ def distanceMeasurement():
 				l_distance = round(l_distance, 2)
 				if(l_prev_distance != l_distance):
 					GPIO.output(alarmOut,False)
-					
-					# if int(l_distance) in range(int(l_prev_distance)-2,int(l_prev_distance)+2,1):
-					# 	pass
-					# 	print 'here'
-					# else:
-					# 	print 'camedown'
-					# 	previousTime =0
-
 					l_prev_distance = l_distance
 					
-
-					# previousTime = 0
 					
-
 					message = {"ID":1,"distance":l_distance}
-					deviceId = "APP"
+					
+					deviceId = "TRASHCANAPP_001"
+					deviceType = "IOTIFY_APP"
+					
 					try:
 						# publishing the message to the Device called APP
 						pubReturn = client.publishEvent(deviceType, deviceId, "status", "json", message)
@@ -110,37 +104,47 @@ def distanceMeasurement():
 					except Exception  as e:
 							logging.info("The sent message Failed")
 							logging.error("The publishEvent exception httpcode :%s,message:%s,response:%s"(e.httpcode,e.message,e.response))
+				
 				if l_distance <50:
 					GPIO.output(alarmOut,True)
 					presentTime = datetime.datetime.now() 
-					 
-					messageBody = "Trashcan at 'area name' filled please come to pickup"
-					if (previousTime!=0):
+					criticalLevelFlag = True 
+					messageBody = "Trashcan at area xyz filled please come to pickup"
+					
+				else :
+					previousTime = -1
+					criticalLevelFlag = False
+
+
+				if criticalLevelFlag == True :		
+					  
+					if (previousTime != -1):
 						diff = presentTime - previousTime 
-				
+						
 						day  = diff.days
 						hour = (day*24 + diff.seconds/3600)
 						diff_minutes = (diff.days *24*60)+(diff.seconds/60)
-						if diff_minutes >= 15:		
-						  
-							try:
-								# twilio message sent option
-								message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
-								# storing the time for the 15min interval purpose
-								previousTime = datetime.datetime.now()
-							except TwilioRestException as e:
-								previousTime = datetime.datetime.now()
-								print e	
-					elif(previousTime == 0):
+
+					if diff_minutes >= 15 or started==False:
+						try:
+							started = True
+							# twilio message sent option
+							message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
+							# storing the time for the 15min interval purpose
+							previousTime = datetime.datetime.now()
+
+						except TwilioRestException as e:
+							previousTime = datetime.datetime.now()							
+							logging.error("The twilio exception %s,%s"%(e,type(e)))
+								
+					elif previousTime == -1 :
 						try:
 							message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
 							previousTime = datetime.datetime.now()
 						except TwilioRestException as e:
 							previousTime = datetime.datetime.now()
-							print e	
-					else:
-						pass	
-
+							logging.error("The twilio exception %s,%s"%(e,type(e)))
+				
 	
 	except KeyboardInterrupt: 
 		GPIO.cleanup()
@@ -157,13 +161,13 @@ Parameters 		:	-
 
 def init():
 	global client,deviceType
-	organization = "5q764p" #Your organization ID
-	appId = "DEVICE"   # The Device you've created and wants to connect with
+	organization = "c25kx4" #Your organization ID
+	appId = "TRASHCAN_001"   # The Device you've created and wants to connect with
 	authMethod = "apikey" #Method of authentication (the only value currently supported is apikey)
-	authKey = "a-5q764p-bpnugpigze" #API key (required if auth-method is apikey).
-	authToken = "JZ4YT5_*n+9OWXw9*w"#API key token (required if auth-method is apikey).
-	deviceType = "Trashcan" # The Type of the device created in your organization 
-	deviceId = "DEVICE" # The Device you've created and wants to connect with                                                                                                       
+	authKey = "a-c25kx4-8jlsytrdfu" #API key (required if auth-method is apikey).
+	authToken = "mK&L+ymD*pI5tzKv0s"#API key token (required if auth-method is apikey).
+	deviceType = "iotify_trashcan" # The Type of the device created in your organization 
+	deviceId = "TRASHCAN_001" # The Device you've created and wants to connect with                                                                                                       
 	try:
 		# options require for the connection
 		options = {"org": organization, "id":appId, "auth-method": authMethod, "auth-key": authKey, "auth-token": authToken}
