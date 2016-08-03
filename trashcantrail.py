@@ -87,7 +87,7 @@ def distanceMeasurement():
 				if(l_prev_distance != l_distance):
 					GPIO.output(alarmOut,False)
 					
-					if l_distance in range(l_prev_distance-2,l_prev_distance+2,0.1):
+					if int(l_distance) in range(int(l_prev_distance)-2,int(l_prev_distance)+2,1):
 						pass
 						print 'here'
 					else:
