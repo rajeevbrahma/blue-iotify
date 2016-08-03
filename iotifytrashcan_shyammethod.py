@@ -129,6 +129,7 @@ def distanceMeasurement():
 					GPIO.output(alarmOut,False)					
 					currentCriticalLevelFlag = False
 					criticalLevelChangeOverFlag = False
+					print "morethancritical",currentDistance
 
 
 				#This means that in this measurement loop , the changeover has happend 
