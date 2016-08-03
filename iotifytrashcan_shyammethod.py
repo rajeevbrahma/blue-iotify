@@ -78,7 +78,8 @@ def distanceMeasurement():
 
 		deviceId = "TRASHCANAPP_001"
 		deviceType = "IOTIFY_APP"
-		
+		messageBody = "Trashcan at 'area name' filled please come to pickup"
+			
 			
 		while 1:
 
@@ -116,17 +117,16 @@ def distanceMeasurement():
 				
 
 				if currentDistance < CRITICAL_DISTANCE:#6.1
+					GPIO.output(alarmOut,True)
 					if currentCriticalLevelFlag == False:#6.1.1
-							currentCriticalLevelFlag = True#6.1.1.2
-							criticalLevelChangeOverFlag = True#6.1.1.3
-							criticalLevelReachedTime = datetime.datetime.now()
-						
-
-
+						currentCriticalLevelFlag = True#6.1.1.2
+						criticalLevelChangeOverFlag = True#6.1.1.3
+						criticalLevelReachedTime = datetime.datetime.now()
 					else:
 						criticalLevelChangeOverFlag = False
 
 				else:
+					GPIO.output(alarmOut,False)					
 					currentCriticalLevelFlag = False
 					criticalLevelChangeOverFlag = False
 
