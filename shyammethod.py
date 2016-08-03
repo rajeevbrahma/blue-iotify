@@ -106,6 +106,7 @@ def distanceMeasurement():
 							logging.error("The publishEvent exception httpcode :%s,message:%s,response:%s"(e.httpcode,e.message,e.response))
 				
 				if l_distance <50:
+					diff_minutes = 0
 					GPIO.output(alarmOut,True)
 					presentTime = datetime.datetime.now() 
 					criticalLevelFlag = True 
@@ -117,8 +118,9 @@ def distanceMeasurement():
 
 
 				if criticalLevelFlag == True :		
-					  
+					
 					if (previousTime != -1):
+
 						diff = presentTime - previousTime 
 						
 						day  = diff.days
