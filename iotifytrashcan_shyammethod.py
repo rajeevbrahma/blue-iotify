@@ -72,7 +72,7 @@ NOTIFICATION_TIME_DELAY = 15
 
 def distanceMeasurement():
 	try:
-		global client,deviceType,LOOP_SAMPLING_TIME,NOTIFICATION_TIME_DELAY,CRITICAL_DISTANCE
+		global client,deviceType,LOOP_SAMPLING_TIME,NOTIFICATION_TIME_DELAY,CRITICAL_DISTANCE,currentCriticalLevelFlag,criticalLevelChangeOverFlag
 		l_prev_distance = 0
 		ultrasonicSensorInit()
 
