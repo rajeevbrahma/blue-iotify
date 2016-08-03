@@ -1,0 +1,49 @@
+Trash can level measurement logic
+
+variables
+
+timeList = []*4  = List to store the values 
+					START_TIME = 0
+					END_TIME = 1
+					TOTAL_TIME = 2
+
+timerFlag = 0 Flag that indicates the measurement came down below the threshold
+
+constants:
+LoopSamplingTime = 2 secs
+CriticalDistance = 50
+NotificationTimeDelay = 15
+
+steps:
+
+step1 : Wait for the LoopSamplingTime
+
+step2 : Check that Lid Cover is closed
+
+step3 : Trigger the sensor to measure distance
+
+step4 : Checking the previous distance with the present distance
+
+step5 : if previous distance is not equal to the present distance send the present distance to the app
+
+step6: if present distance less than criticalDistance,else set the Alarm to False and reset the timer Flag.
+
+step 6.1 : check the timerFlag(Flag used to decide whether to start timer or not)
+
+step 6.2 : if timerFlag is reset, set the current time to START_TIME.
+
+step 7 : call the timer function
+
+step 7.1 : set the current time to the  END_TIME
+
+step 7.2 : check if timerFlag is reset
+
+step 7.3 : if timerFlag is reset, set timerFlag and send twilio notification
+
+step 7.4 : if timerFlag is set calculate the TOTAL_TIME
+
+step 7.5 : if TOTAL_TIME is greater than NotificationTimeDelay 
+
+step 7.6 : reset the timerFlag.
+
+

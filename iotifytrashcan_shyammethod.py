@@ -133,6 +133,7 @@ def distanceMeasurement():
 
 				#This means that in this measurement loop , the changeover has happend 
 				if criticalLevelChangeOverFlag == True:
+					print '1',currentDistance
 					try:
 						message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
 					except TwilioRestException as e:
@@ -152,6 +153,7 @@ def distanceMeasurement():
 					diff_minutes = (diff.days *24*60)+(diff.seconds/60)			
 
 					if diff_minutes > NOTIFICATION_TIME_DELAY:
+						print '2',currentDistance
 						try:								
 							message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
 						except TwilioRestException as e:
