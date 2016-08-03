@@ -116,17 +116,17 @@ def distanceMeasurement():
 				
 
 				if currentDistance < CRITICAL_DISTANCE:#6.1
-					if currentCriticalLevelFlag == False:
-							currentCriticalLevelFlag = True
-							criticalLevelChangeOverFlag = True
+					if currentCriticalLevelFlag == False:#6.1.1
+							currentCriticalLevelFlag = True#6.1.1.2
+							criticalLevelChangeOverFlag = True#6.1.1.3
 							criticalLevelReachedTime = datetime.datetime.now()
 						
 
 
-					if currentCriticalLevelFlag == True:#6.1.2
+					else:
 						criticalLevelChangeOverFlag = False
 
-				if currentDistance > criticalDistance: #6.2
+				else:
 					currentCriticalLevelFlag = False
 					criticalLevelChangeOverFlag = False
 
@@ -141,25 +141,25 @@ def distanceMeasurement():
 					notificationSentTime = datetime.datetime.now()
 				
 
-				if criticalLevelChangeOverFlag == False:
-					# This means that in this measurement loop the level stays at the critical level
-					if currentCriticalLevelFlag == True:
-						#calculate timedifference
-						diff = distanceRecordedTime - notificationSentTime 
-		
-						day  = diff.days
-						hour = (day*24 + diff.seconds/3600)
-						diff_minutes = (diff.days *24*60)+(diff.seconds/60)			
-
-						if diff_minutes > NOTIFICATION_TIME_DELAY:
-							try:								
-								message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
-							except TwilioRestException as e:
-								logging.error("The exception in twilio %s,%s"(e,type(e)))	
-							
-
-							notificationSentTime = datetime.datetime.now()
+				# This means that in this measurement loop the level stays at the critical level
 				
+				elif (currentCriticalLevelFlag == True):
+					#calculate timedifference
+					diff = distanceRecordedTime - notificationSentTime 
+	
+					day  = diff.days
+					hour = (day*24 + diff.seconds/3600)
+					diff_minutes = (diff.days *24*60)+(diff.seconds/60)			
+
+					if diff_minutes > NOTIFICATION_TIME_DELAY:
+						try:								
+							message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
+						except TwilioRestException as e:
+							logging.error("The exception in twilio %s,%s"(e,type(e)))	
+						
+
+						notificationSentTime = datetime.datetime.now()
+			
 						
 	except KeyboardInterrupt: 
 		GPIO.cleanup()
