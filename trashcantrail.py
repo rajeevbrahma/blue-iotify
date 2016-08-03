@@ -33,7 +33,15 @@ ECHO = 6 # Broadcom pin 23 (P1 pin 16)
 LIDCOVER = 15
 alarmOut = 22 # Broadcom pin 22 (P1 pin 15) 
 
-
+#################################
+timeList = [None]*5
+timerFlag = 0
+START_TIME = 0
+END_TIME = 1
+TOTAL_TIME = 2
+TIMER_FLAG = 3
+timeList[TIMER_FLAG] = 0
+#################################
 
 '''****************************************************************************************
 Function Name 	:	ultrasonicSensorInit()
@@ -50,6 +58,40 @@ def ultrasonicSensorInit():
 	GPIO.setup(alarmOut,GPIO.OUT)
 	GPIO.output(TRIG, False)
 	GPIO.output(alarmOut,False)
+
+def timerFunction(p_reqType):
+	timeList[END_TIME] = datetime.datetime.now() 
+	if(p_reqType == 0):
+	else:
+		messageBody = "Trashcan at 'area name' filled please come to pickup"
+		if(timerFlag == 0):
+			timerFlag = 1
+			timeList[TOTAL_TIME] = (timeList[END_TIME] - timeList[START_TIME]).total_seconds() / 60
+			try:
+				# twilio message sent option
+				message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
+				# storing the time for the 15min interval purpose
+				previousTime = datetime.datetime.now()
+			except TwilioRestException as e:
+				previousTime = datetime.datetime.now()
+				print e	
+
+		if(timeList[TIMER_FLAG] == 1):
+			timeList[TOTAL_TIME] = (timeList[END_TIME] - timeList[START_TIME]).total_seconds() / 60
+			if(timeList[TOTAL_TIME] > 15):
+				timeList[TIMER_FLAG] = 0
+				timerFlag = 0
+				try:
+					# twilio message sent option
+					message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
+					# storing the time for the 15min interval purpose
+					previousTime = datetime.datetime.now()
+				except TwilioRestException as e:
+					previousTime = datetime.datetime.now()
+					print e
+
+
+
 
 '''****************************************************************************************
 Function Name 	:	distanceMeasurement()
@@ -98,8 +140,8 @@ def distanceMeasurement():
 					
 
 					# previousTime = 0
-					
-
+					timerFunction(0)
+					timerFlag = 0
 					message = {"ID":1,"distance":l_distance}
 					deviceId = "APP"
 					try:
@@ -112,34 +154,30 @@ def distanceMeasurement():
 							logging.error("The publishEvent exception httpcode :%s,message:%s,response:%s"(e.httpcode,e.message,e.response))
 				if l_distance <50:
 					GPIO.output(alarmOut,True)
-					presentTime = datetime.datetime.now() 
-					 
-					messageBody = "Trashcan at 'area name' filled please come to pickup"
-					if (previousTime!=0):
-						diff = presentTime - previousTime 
+					# presentTime = datetime.datetime.now() 
+					if (timerFlag == 0 and timeList[TIMER_FLAG] == 0):
+						timeList[TIMER_FLAG] = 1
+						timeList[START_TIME] = datetime.datetime.now()
+						timerFunction(1)
+
+					# if (previousTime!=0):
+					# 	diff = presentTime - previousTime 
 				
-						day  = diff.days
-						hour = (day*24 + diff.seconds/3600)
-						diff_minutes = (diff.days *24*60)+(diff.seconds/60)
-						if diff_minutes >= 15:		
+					# 	day  = diff.days
+					# 	hour = (day*24 + diff.seconds/3600)
+					# 	diff_minutes = (diff.days *24*60)+(diff.seconds/60)
+					# 	if diff_minutes >= 15:		
 						  
-							try:
-								# twilio message sent option
-								message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
-								# storing the time for the 15min interval purpose
-								previousTime = datetime.datetime.now()
-							except TwilioRestException as e:
-								previousTime = datetime.datetime.now()
-								print e	
-					elif(previousTime == 0):
-						try:
-							message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
-							previousTime = datetime.datetime.now()
-						except TwilioRestException as e:
-							previousTime = datetime.datetime.now()
-							print e	
-					else:
-						pass	
+							
+					# elif(previousTime == 0):
+					# 	try:
+					# 		message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
+					# 		previousTime = datetime.datetime.now()
+					# 	except TwilioRestException as e:
+					# 		previousTime = datetime.datetime.now()
+					# 		print e	
+					# else:
+					# 	pass	
 
 	
 	except KeyboardInterrupt: 
