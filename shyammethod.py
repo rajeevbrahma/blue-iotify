@@ -137,7 +137,7 @@ def distanceMeasurement():
 							previousTime = datetime.datetime.now()							
 							logging.error("The twilio exception %s,%s"%(e,type(e)))
 								
-					elif previousTime == -1 :
+					elif previousTime == -1 and started==True:
 						try:
 							message = twilioClient.messages.create(body=messageBody,to="+919738300498",from_="+12512724152")	
 							previousTime = datetime.datetime.now()
